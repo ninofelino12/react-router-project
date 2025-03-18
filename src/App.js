@@ -29,6 +29,7 @@ function App() {
     const intervalId = setInterval(fetchData, 5000); // Ambil data setiap 5 detik (5000 ms)
 
     // Membersihkan interval saat komponen unmount
+    
     return () => clearInterval(intervalId);
   }, []);
 
@@ -108,6 +109,7 @@ function App() {
   </div>
 ))}
     </div>
+   
   );
 }
 

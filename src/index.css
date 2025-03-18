@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+#datan {
+  font-family: sans-serif;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+#datan ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#datan li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+#datan li:last-child {
+  border-bottom: none;
+}
+
+#datan h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}

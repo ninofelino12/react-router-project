@@ -15,6 +15,9 @@ unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
 #include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+int lcdColumns = 16;
+int lcdRows = 2;
 #ifdef ESP32
   #include <WiFi.h>
   #include <AsyncTCP.h>
@@ -93,10 +96,11 @@ int reading ;
 const int BUZZZER_PIN = D8;
 const int buzzerPin = D8;
 byte buzzer = D8;  
+LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows); 
 void handleRoot() {
  // server.send(200, "text/html", "<h1>ESP32 WiFi Extender & Web Server</h1>");
 }
-
+ int nctl = 0;
 unsigned long getTime() {
   time_t now;
   struct tm timeinfo;
@@ -108,7 +112,9 @@ unsigned long getTime() {
   return now;
 }
 void setup() {
-  
+  lcd.init();
+  // turn on LCD backlight                      
+  lcd.backlight();
    dht.begin();
     pinMode(buzzerPin, OUTPUT);
   Serial.begin(115200);
@@ -217,11 +223,19 @@ void scani2c() {
 
 
 void loop() {
+ 
    tone(buzzerPin, 3000); // Buzzer berbunyi dengan frekuensi 2000 Hz
   delay(100); // Durasi bunyi detak
   noTone(buzzerPin); // Buzzer mati
   delay(200); // Jeda antar detak
-  
+    lcd.setCursor(0, 0);
+  // print message
+  lcd.print("cool guard");
+  delay(1000);
+     lcd.setCursor(0,1);
+
+  // clears the display to print new message
+  //lcd.clear();
   timeClient.update();
     unsigned long epochTime = timeClient.getEpochTime();
     time_t rawtime = epochTime;
@@ -276,6 +290,12 @@ Serial.print(ESP.getCoreVersion());
       masterdata.set("photo",GITHUB+String("P")+alamat);
      //   masterdata.set("photo2",GITHUB+String("P")+alamat);
       masterdata.set("33-Flash ",ESP.getFlashChipSize() / (1024 * 1024));
+      masterdata.set("z50-PIND8_BUZZER",digitalRead(buttonPin));
+      masterdata.set("z50-PIND7",digitalRead(D7));
+      masterdata.set("z50-PIND6",digitalRead(D6));
+      masterdata.set("z50-PIND5",digitalRead(D5));
+      masterdata.set("z51 Count", nctl++);
+     
      
 
 
@@ -292,7 +312,9 @@ Serial.print(ESP.getCoreVersion());
     Serial.printf("Set json... %s\n", Firebase.RTDB.pushJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
     Serial.printf("Set master json... %s\n", Firebase.RTDB.setJSON(&fbdo, masterparentPath.c_str(), &masterdata) ? "ok" : fbdo.errorReason().c_str());
   //  Serial.printf("Hardware... %s\n", Firebase.RTDB.setJSON(&fbdo, hardwarePath.c_str(), &hardwaredata) ? "ok" : fbdo.errorReason().c_str());
-  
+     lcd.setCursor(0, 1);
+  // print message
+     lcd.print(fbdo.errorReason().c_str());
       delay(10000);
    
 }}
@@ -319,9 +341,12 @@ void removeColons(char *str) {
           if (response.indexOf("OK") != -1) {
             Serial.println("SIM800 terdeteksi!");
             ismodem=true;
+            
             return;
           }
         }
       }
       Serial.println("SIM800 tidak terdeteksi!");
+       lcd.setCursor(0,1);
+      lcd.print("SIM800 tidak terdeteksi!");
     }
