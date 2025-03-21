@@ -51,7 +51,7 @@ const int DHTPin = 5;
 DHT dht(DHTPin, DHTTYPE);
 
     SoftwareSerial sim800(10, 11); // RX, TX
-const char* apSSID = "ECU-IOT1-LOLIN";
+const char* apSSID = "ECU"+ESP.getChipId();
 const char* apPassword = "11111111";
 const char* staSSID = "MEGAVISION";
 const char* staPassword = "nino2345";
@@ -223,7 +223,13 @@ void scani2c() {
 
 
 void loop() {
- 
+  char buffer[50];
+  buttonState = digitalRead(buttonPin); // Baca status push button
+
+  if (buttonState == LOW) { // Jika tombol ditekan (LOW karena pull-up)
+    Serial.println("Tombol ditekan!");
+    delay(200); // Debouncing (menghindari pembacaan ganda)
+  }
    tone(buzzerPin, 3000); // Buzzer berbunyi dengan frekuensi 2000 Hz
   delay(100); // Durasi bunyi detak
   noTone(buzzerPin); // Buzzer mati
@@ -295,7 +301,15 @@ Serial.print(ESP.getCoreVersion());
       masterdata.set("z50-PIND6",digitalRead(D6));
       masterdata.set("z50-PIND5",digitalRead(D5));
       masterdata.set("z51 Count", nctl++);
-     
+      int d5Value = digitalRead(14);
+ 
+//binary_string = str(d8_val) + str(d7_val) + str(d6_val) + str(d5_val) // #most significant bit is d8
+ //binary_integer = int(binary_string, 2)
+  // Gabungkan nilai-nilai menjadi satu nilai biner
+ // int binaryValue = (d8Value << 3) | (d7Value << 2) | (d6Value << 1) | d5Value;
+//int angka[] = {10, 20, 30, 40, 50}; 
+  // sprintf(buffer, "Values: %d, %d, %d", digitalRead(5),digitalRead(6),digitalRead(7));
+   masterdata.set("Led", buffer);
      
 
 
@@ -305,7 +319,8 @@ Serial.print(ESP.getCoreVersion());
     hardwaredata.set("I2C",address);
     hardwaredata.set("Chipid",ESP.getChipId());
      hardwaredata.set("freq",ESP.getCpuFreqMHz());
-        hardwaredata.set("Flash ",ESP.getFlashChipSize() / (1024 * 1024));
+    hardwaredata.set("Flash ",ESP.getFlashChipSize() / (1024 * 1024));
+    hardwaredata.set("Led",{digitalRead(D4),digitalRead(D5)});
 
 
   //  json.set("timePath", String(timestamp));
@@ -331,6 +346,25 @@ void removeColons(char *str) {
   }
   strcpy(str, temp); // Salin string hasil kembali ke string asli
 }
+
+
+int esp32PinsToBinary(int d5, int d6, int d7, int d8) {
+  /*
+    Converts the digital states of ESP32 pins D5, D6, D7, and D8 to an integer.
+
+    Args:
+      d5: State of pin D5 (HIGH or LOW, 1 or 0).
+      d6: State of pin D6 (HIGH or LOW, 1 or 0).
+      d7: State of pin D7 (HIGH or LOW, 1 or 0).
+      d8: State of pin D8 (HIGH or LOW, 1 or 0).
+
+    Returns:
+      The integer representation of the binary value.
+  */
+
+  return (d8 << 3) | (d7 << 2) | (d6 << 1) | d5;
+}
+
  void cekSIM800() {
       sim800.println("AT");
       delay(100);

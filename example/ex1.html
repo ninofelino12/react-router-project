@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Firebase</title>
+</head>
+<body>
+    <h1>Data dari Firebase</h1>
+    <div id="data-container"></div>
+
+    <script>
+        const url = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy="$key"&startAt="master"&endAt="master\\uf8ff"';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const dataContainer = document.getElementById('data-container');
+                let html = '<ul>';
+
+                for (const key in data) {
+                    html += `<li><strong>${key}:</strong> ${JSON.stringify(data[key])}</li>`;
+                }
+
+                html += '</ul>';
+                dataContainer.innerHTML = html;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

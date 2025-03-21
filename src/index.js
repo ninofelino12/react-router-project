@@ -24,18 +24,8 @@ reportWebVitals();
 
 function DataDisplay() {
   return (
-    <div id="datan">
-      DATA PIN ESP8266
-      <ul>
-        <li>D1-SCL lcd</li>
-        <li>D2-SDA </li>
-        <a href="https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/circuit-diagram-10.png">LCD</a>
-        <li>D3 - LCD</li>
-        <li>D4 - LCD</li>
-        <li>D5 - BUTTON</li>
-        <li>D6 - BUTTON</li>
-        <li>D7 - BUTTON</li>
-      </ul>
+    <div id="data">
+     
     </div>
   );
 }

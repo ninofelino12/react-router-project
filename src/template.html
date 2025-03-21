@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>tampil</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>dari Firebase</h1>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+    </table>
+
+    <script>
+        const url = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=%22$key%22&startAt=%22master%22&endAt=%22master\\uf8ff%22';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('table-body');
+
+                for (const key in data) {
+                    const item = data[key];
+                    for (const itemKey in item) {
+                        const row = document.createElement('tr');
+                        const keyCell = document.createElement('td');
+                        const valueCell = document.createElement('td');
+
+                        keyCell.textContent = itemKey;
+                        if (typeof item[itemKey] === 'object' && item[itemKey] !== null) {
+                            // Jika value adalah objek, tampilkan properti-properti objek dalam tabel nested
+                            const nestedTable = document.createElement('table');
+                            const nestedTbody = document.createElement('tbody');
+
+                            for (const nestedKey in item[itemKey]) {
+                                const nestedRow = document.createElement('tr');
+                                const nestedKeyCell = document.createElement('td');
+                                const nestedValueCell = document.createElement('td');
+                                //tampilan data 
+                                nestedKeyCell.textContent = nestedKey;
+                                nestedValueCell.textContent = item[itemKey][nestedKey];
+                                //  masukkan ke html
+                                nestedRow.appendChild(nestedKeyCell);
+                                nestedRow.appendChild(nestedValueCell);
+                                nestedTbody.appendChild(nestedRow);
+                            }
+
+                            nestedTable.appendChild(nestedTbody);
+                            valueCell.appendChild(nestedTable);
+                        } else {
+                            try {
+                                // Coba parse value sebagai ISO JSON
+                                const parsedValue = JSON.parse(item[itemKey]);
+                                if (typeof parsedValue === 'object' && parsedValue !== null) {
+                                    // Jika berhasil parse dan berupa objek, tampilkan dalam tabel nested
+                                    const nestedTable = document.createElement('table');
+                                    const nestedTbody = document.createElement('tbody');
+
+                                    for (const nestedKey in parsedValue) {
+                                        const nestedRow = document.createElement('tr');
+                                        const nestedKeyCell = document.createElement('td');
+                                        const nestedValueCell = document.createElement('td');
+
+                                        nestedKeyCell.textContent = nestedKey;
+                                        nestedValueCell.textContent = parsedValue[nestedKey];
+
+                                        nestedRow.appendChild(nestedKeyCell);
+                                        nestedRow.appendChild(nestedValueCell);
+                                        nestedTbody.appendChild(nestedRow);
+                                    }
+
+                                    nestedTable.appendChild(nestedTbody);
+                                    valueCell.appendChild(nestedTable);
+                                } else {
+                                    // Jika bukan objek, tampilkan sebagai string
+                                    valueCell.textContent = item[itemKey];
+                                }
+                            } catch (e) {
+                                // Jika gagal parse, tampilkan sebagai string biasa
+                                valueCell.textContent = item[itemKey];
+                            }
+                        }
+
+                        row.appendChild(keyCell);
+                        row.appendChild(valueCell);
+                        tableBody.appendChild(row);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>

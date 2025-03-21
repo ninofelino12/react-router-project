@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Firebase (00-tanggal)</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Firebase (00-tanggal)</h1>
+    <div id="data-container"></div>
+
+    <script>
+        const url = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy="$key"&startAt="master"&endAt="master\\uf8ff"';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

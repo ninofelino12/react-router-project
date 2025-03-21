@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Firebase (Tabel Bersarang)</title>
+    
+</head>
+<body>
+    <h1>Data dari Firebase (Tabel Bersarang)</h1>
+    <div id="data-container"></div>
+
+    <script>
+        const url = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy="$key"&startAt="master"&endAt="master\\uf8ff"';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const dataContainer = document.getElementById('data-container');
+                let html = '<table>';
+                html += '<thead><tr><th>Key</th><th>Value</th></tr></thead>';
+                html += '<tbody>';
+
+                for (const key in data) {
+                    html += `<tr><td>${key}</td><td>${formatValue(data[key])}</td></tr>`;
+                }
+
+                html += '</tbody></table>';
+                dataContainer.innerHTML = html;
+            })
+            .catch(error => console.error('Error:', error));
+
+        function formatValue(value) {
+            if (typeof value === 'object' && value !== null) {
+                if (Array.isArray(value)) {
+                    // Jika nilai adalah array
+                    let arrayHtml = '<ul>';
+                    value.forEach(item => {
+                        arrayHtml += `<li>${formatValue(item)}</li>`;
+                    });
+                    arrayHtml += '</ul>';
+                    return arrayHtml;
+                } else {
+                    // Jika nilai adalah objek
+                    let objectHtml = '<table>';
+                    for (const prop in value) {
+                        objectHtml += `<tr><td>${prop}</td><td>${formatValue(value[prop])}</td></tr>`;
+                    }
+                    objectHtml += '</table>';
+                    return objectHtml;
+                }
+            } else {
+                // Jika nilai adalah tipe data primitif
+                return JSON.stringify(value);
+            }
+        }
+    </script>
+</body>
+</html>

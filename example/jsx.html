@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cooguard</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const data = {
+            "master-EC:FA:BC:5A:47:D7": {
+                "00-tanggal": "Thu Mar 20 09:17:36 2025\n",
+                "01-OVERHEAD": 1,
+                "02-ACC": 1,
+                "03-alatberat": "Excavator",
+                "03-type": "Excavator",
+                "04-nama": "BOLDUZER",
+                "05-operator": "Jhoni",
+                "08-reading": 1,
+                "32-mcu": "ESP8266",
+                "33-Flash": 4,
+                "33-idmcu": 5916631,
+                "37-lokasi": "gps",
+                "40-suhumesin": 77,
+                "img": "https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/5916631.jpg",
+                "link": "data-EC:FA:BC:5A:47:D7",
+                "photo": "https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/P5916631.jpg",
+                "timestamp": 1742462256,
+                "z50-PIND5": 1,
+                "z50-PIND6": 1,
+                "z50-PIND7": 1,
+                "z50-PIND8_BUZZER": 1,
+                "z51 Count": 39
+            }
+        };
+
+        const CoolGuard = () => {
+            const innerObject = Object.values(data)[0];
+
+            return (
+                <div>
+                    <h1>CoolGuard</h1>
+                    <div>
+                        <h1>asal data</h1>
+                    {JSON.stringify(data, null, 2)}
+                    </div>
+                    <h2>Ditampilkan secara tabel</h2>
+                    <table>
+                       
+                        <tbody>
+                            
+                            <tr>
+                                <td>05-operator</td>
+                                <td>{String(innerObject['05-operator'])}</td>
+                           
+                                <td> 40-suhumesin</td>
+                                <td>{String(innerObject['40-suhumesin'])}</td>
+                            </tr>
+                            <h2>ditampilkan secara card</h2>
+                            <tr>
+                                <td>05-operator</td>
+                                <td>{String(innerObject['05-operator'])}</td>
+                            </tr><tr>
+                                <td> 40-suhumesin</td>
+                                <td>{String(innerObject['40-suhumesin'])}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CoolGuard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

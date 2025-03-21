@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .led {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: gray; /* Warna LED mati */
+  display: inline-block;
+  margin: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Efek bayangan */
+}
+
+.led.on {
+  background-color: red; /* Warna LED hidup (merah) */
+  box-shadow: 0 0 10px red; /* Efek cahaya */
+}
+
+.led.blue {
+    background-color: blue;
+    box-shadow: 0 0 10px blue;
+}
+        .led-array {
+  display: flex;
+  flex-wrap: wrap; /* Mengatur agar LED dapat berpindah baris */
+  width: 200px; /* Lebar container (sesuaikan dengan jumlah LED) */
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+    </style>
+    <div class="led-array">
+        <div class="led on">2</div>
+        <div class="led">3</div>
+        <div class="led blue"></div>
+        <div class="led"></div>
+        <div class="led on"></div>
+        <div class="led"></div>
+        <div class="led"></div>
+        <div class="led blue"></div>
+      </div>
+</body>
+</html>
