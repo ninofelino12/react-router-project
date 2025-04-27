@@ -1,279 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konfigurasi Coolguard</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: calc(100% - 22px); /* Adjust for padding */
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-
-        /* Media query untuk layar yang lebih kecil */
-        @media (max-width: 600px) {
-            body {
-                font-size: 16px;
-                margin: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-                margin-bottom: 20px;
-            }
-
-            form {
-                padding: 15px;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
-            }
-
-            label {
-                font-size: 14px;
-            }
-
-            input[type="text"],
-            input[type="password"] {
-                font-size: 14px;
-                padding: 8px;
-            }
-
-            button[type="submit"] {
-                font-size: 14px;<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konfigurasi Coolguard</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: calc(100% - 22px); /* Adjust for padding */
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-
-        /* Media query untuk layar yang lebih kecil */
-        @media (max-width: 600px) {
-            body {
-                font-size: 16px;
-                margin: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-                margin-bottom: 20px;
-            }
-
-            form {
-                padding: 15px;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
-            }
-
-            label {
-                font-size: 14px;
-            }
-
-            input[type="text"],
-            input[type="password"] {
-                font-size: 14px;
-                padding: 8px;
-            }
-
-            button[type="submit"] {
-                font-size: 14px;
-                padding: 10px 15px;
-            }
-        }
-    </style>
+<title>Data dari Firebase (Semua Tabel Bersarang)</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Konfigurasi Coolguard</h1>
-    <form action="/save_config" method="post">
-        <div class="form-group">
-            <label for="ssid">SSID:</label>
-            <input type="text" value="MEGAVISION" id="ssid" name="ssid" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password Wi-Fi:</label>
-            <input type="password" value="nino2345" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label for="api_key">API Database:</label>
-            <input type="text" value="AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc" id="api_key" name="api_key" required>
-        </div>
-        <div class="form-group">
-            <label for="firebase_url">Firebase URL:</label>
-            <input type="text" id="firebase_url" VALUE="https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app" name="firebase_url" required>
-        </div>
-        <button type="submit">Simpan Konfigurasi</button>
-    </form>
 
-    <div id="error-container" class="error-message">
-        </div>
+<nav>
+  <a href="#">Operasional</a>
+  <a href="#">Master data</a>
+  <a href="config.html">Setup</a>
+</nav>
 
-    <script>
-        // Contoh sederhana untuk menampilkan pesan error (bisa dikembangkan lebih lanjut)
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorMessage = urlParams.get('error');
-        if (errorMessage) {
-            document.getElementById('error-container').innerText = errorMessage;
-        }
-    </script>
-</body>
-</html>
-                padding: 10px 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>Konfigurasi Coolguard</h1>
-    <form action="/save_config" method="post">
-        <div class="form-group">
-            <label for="ssid">SSID:</label>
-            <input type="text" id="ssid" name="ssid" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password Wi-Fi:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label for="api_key">API Database:</label>
-            <input type="text" id="api_key" name="api_key" required>
-        </div>
-        <div class="form-group">
-            <label for="firebase_url">Firebase URL:</label>
-            <input type="text" id="firebase_url" name="firebase_url" required>
-        </div>
-        <button type="submit">Simpan Konfigurasi</button>
-    </form>
+<h2>Data Master</h2>
 
-    <div id="error-container" class="error-message">
-        </div>
+<table id="data-table">
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
-    <script>
-        // Contoh sederhana untuk menampilkan pesan error (bisa dikembangkan lebih lanjut)
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorMessage = urlParams.get('error');
-        if (errorMessage) {
-            document.getElementById('error-container').innerText = errorMessage;
-        }
-    </script>
+<script>
+const url = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy="$key"&startAt="master"&endAt="master\\uf8ff"';
+
+function displayNestedTable(data) {
+  if (typeof data === 'object' && data !== null) {
+    const nestedTable = document.createElement('table');
+    nestedTable.classList.add('nested-table');
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    const tbody = document.createElement('tbody');
+
+    let headers = [];
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        headers.push(key);
+      }
+    }
+
+    headers.forEach(headerText => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    nestedTable.appendChild(thead);
+
+    const dataRow = document.createElement('tr');
+    headers.forEach(header => {
+      const td = document.createElement('td');
+      if (typeof data[header] === 'object' && data[header] !== null) {
+        td.appendChild(displayNestedTable(data[header])); // Rekursif
+      } else {
+        td.textContent = data[header];
+      }
+      dataRow.appendChild(td);
+    });
+    tbody.appendChild(dataRow);
+    nestedTable.appendChild(tbody);
+
+    return nestedTable;
+  } else {
+    return document.createTextNode(data);
+  }
+}
+
+fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const tableBody = document.querySelector('#data-table tbody');
+    tableBody.innerHTML = '';
+
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        const row = document.createElement('tr');
+        const keyCell = document.createElement('td');
+        const valueCell = document.createElement('td');
+
+        keyCell.textContent = key;
+        // Panggil displayNestedTable untuk setiap nilai
+        valueCell.appendChild(displayNestedTable(data[key]));
+
+        row.appendChild(keyCell);
+        row.appendChild(valueCell);
+        tableBody.appendChild(row);
+      }
+    }
+  })
+  .catch(error => console.error('Error fetching data:', error));
+</script>
+
 </body>
 </html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase CRUD dengan Nama dan Alamat</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+        }
+
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #data-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 600px) {
+            form, #data-container {
+                width: 95%;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+    <script>
+        // Konfigurasi Firebase (Ganti dengan informasi proyek Firebase Anda)
+     
+        const firebaseConfig = {
+  apiKey: "AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc",
+  authDomain: "myiot-5a297.firebaseapp.com",
+  databaseURL: "https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "myiot-5a297",
+  storageBucket: "myiot-5a297.firebasestorage.app",
+  messagingSenderId: "411158047626",
+  appId: "1:411158047626:web:9d96ea2d3ce7c4ac7a3673"
+};
+
+
+        // Inisialisasi Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const dataRef = database.ref('data'); // Referensi ke node 'data' di database
+
+        // Fungsi untuk menyimpan data ke Firebase
+        function simpanData() {
+            const nama = document.getElementById('nama').value;
+            const alamat = document.getElementById('alamat').value;
+
+            if (nama && alamat) {
+                // Gunakan push() untuk membuat key unik otomatis
+                const newDataRef = dataRef.push();
+                newDataRef.set({
+                    nama: nama,
+                    alamat: alamat
+                }).then(() => {
+                    alert('Data berhasil disimpan!');
+                    document.getElementById('nama').value = '';
+                    document.getElementById('alamat').value = '';
+                    tampilkanData(); // Perbarui tampilan data
+                }).catch((error) => {
+                    alert('Terjadi kesalahan: ' + error.message);
+                });
+            } else {
+                alert('Harap isi nama dan alamat!');
+            }
+        }
+
+        // Fungsi untuk menampilkan data dari Firebase
+        function tampilkanData() {
+            const dataContainer = document.getElementById('data-container');
+            dataContainer.innerHTML = '<h2>Data yang Tersimpan</h2><table id="data-table"><thead><tr><th>Nama</th><th>Alamat</th><th>Aksi</th></tr></thead><tbody></tbody></table>';
+            const tableBody = document.querySelector('#data-table tbody');
+
+            dataRef.once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const key = childSnapshot.key;
+                    const data = childSnapshot.val();
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.nama}</td>
+                        <td>${data.alamat}</td>
+                        <td>
+                            <button onclick="editData('${key}', '${data.nama}', '${data.alamat}')">Edit</button>
+                            <button onclick="hapusData('${key}')">Hapus</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+
+        // Fungsi untuk mengedit data
+        function editData(key, nama, alamat) {
+            const namaInput = prompt('Nama baru:', nama);
+            const alamatInput = prompt('Alamat baru:', alamat);
+
+            if (namaInput && alamatInput) {
+                const updateData = {
+                    nama: namaInput,
+                    alamat: alamatInput
+                };
+
+                dataRef.child(key).update(updateData)
+                    .then(() => {
+                        alert('Data berhasil diupdate!');
+                        tampilkanData();
+                    })
+                    .catch(error => alert("Error updating data: ", error));
+            } else if (namaInput || alamatInput) {
+                 alert('Harap isi nama dan alamat!');
+            }
+        }
+
+        // Fungsi untuk menghapus data
+        function hapusData(key) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                dataRef.child(key).remove()
+                    .then(() => {
+                        alert('Data berhasil dihapus!');
+                        tampilkanData();
+                    })
+                    .catch(error => alert("Error deleting data: ", error));
+            }
+        }
+
+        // Panggil fungsi tampilkanData() saat halaman dimuat
+        window.onload = tampilkanData;
+    </script>
+</head>
+<body>
+
+    <h1>Firebase CRUD Operasi</h1>
+
+    <form id="form-input">
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" placeholder="Masukkan Nama" /><br />
+
+        <label for="alamat">Alamat:</label>
+        <input type="text" id="alamat" name="alamat" placeholder="Masukkan Alamat" /><br />
+
+        <button type="button" onclick="simpanData()">Simpan Data</button>
+    </form>
+
+    <div id="data-container">
+        </div>
+
+</body>
+</html>

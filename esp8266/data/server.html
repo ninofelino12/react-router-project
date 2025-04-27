@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Server</title>
+</head>
+<body>
+
+    <h1>Informasi Server</h1>
+
+    <div id="info-container">
+        <p><strong>URL Server:</strong> <span id="server-url"></span></p>
+        <p><strong>Metode Request:</strong> <span id="request-method"></span></p>
+        <p><strong>Header User-Agent:</strong> <span id="user-agent"></span></p>
+    </div>
+
+    <script>
+        // Fungsi untuk mendapatkan informasi server (ini adalah contoh dan memerlukan server-side script)
+        function getServerInfo() {
+            // Secara tradisional, informasi server tidak dapat diakses langsung oleh JavaScript di sisi klien.
+            // Informasi ini biasanya diakses melalui permintaan ke server (misalnya, menggunakan fetch).
+            // Kode di bawah ini adalah contoh bagaimana *jika* Anda memiliki endpoint server yang mengembalikan informasi ini.
+
+            fetch('/server-info') // Ganti '/server-info' dengan URL endpoint Anda yang sebenarnya
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Perbarui elemen HTML dengan data yang diterima dari server.
+                    document.getElementById('server-url').textContent = data.url || 'Tidak Tersedia';
+                    document.getElementById('request-method').textContent = data.method || 'Tidak Tersedia';
+                    document.getElementById('user-agent').textContent = data.userAgent || 'Tidak Tersedia';
+                })
+                .catch(error => {
+                    console.error('Error fetching server info:', error);
+                    // Menampilkan pesan kesalahan kepada pengguna
+                    document.getElementById('server-url').textContent = 'Gagal mengambil informasi';
+                    document.getElementById('request-method').textContent = 'Gagal mengambil informasi';
+                    document.getElementById('user-agent').textContent = 'Gagal mengambil informasi';
+                });
+        }
+
+        // Panggil fungsi untuk mendapatkan informasi server saat halaman dimuat
+        getServerInfo();
+    </script>
+</body>
+</html>

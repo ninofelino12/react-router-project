@@ -32,7 +32,7 @@ unsigned long sendDataPrevMillis = 0;
 unsigned long count = 0;
 
 const char* apSSID = "coolguard";
-const char* apPassword = "password123";
+const char* apPassword = "12345678";
 const char* staSSID = "MEGAVISION";
 const char* staPassword = "nino2345";
 
@@ -68,6 +68,10 @@ void handleNotFound() {
   server.send(404, "text/plain", "Halaman Tidak Ditemukan!");
 }
 
+void handleStatus() {
+  server.send(404, "text/plain", status());
+}
+
 String status() {
   Serial.println(signupOK); // Cetak nilai signupOK untuk debugging
 
@@ -82,6 +86,12 @@ String status() {
   int pin12Status = digitalRead(12);
   jsonString += "\"pin12\": ";
   jsonString += (digitalRead(12) == HIGH) ? "\"HIGH\"" : "\"LOW\"";
+  jsonString += "\"pin13\": ";
+  jsonString += (digitalRead(13) == HIGH) ? "\"HIGH\"" : "\"LOW\"";
+    jsonString += "\"pin14\": ";
+  jsonString += (digitalRead(14) == HIGH) ? "\"HIGH\"" : "\"LOW\"";
+    jsonString += "\"pin15\": ";
+  jsonString += (digitalRead(15) == HIGH) ? "\"HIGH\"" : "\"LOW\"";
 
   jsonString += "}";
   return jsonString;
@@ -126,6 +136,7 @@ pinMode(15, INPUT_PULLUP); // Konfigurasi pin 12 sebagai input pull-up
   server.on("/", handleRoot);
 // ...
 server.on("/tutup", handleTutup);
+server.on("/status", handleTutup);
 // ...
   // ...
   server.begin();
@@ -157,6 +168,7 @@ server.on("/tutup", handleTutup);
 
 void loop() {
   Serial.println(status());
+  Serial.println(WiFi.softAPIP());
   if (WiFi.status() == WL_CONNECTED && Firebase.ready()) {
     Serial.println("ESP8266 terhubung ke Firebase!");
     // Lakukan operasi Firebase di sini (misalnya, set atau get data)
@@ -178,5 +190,6 @@ void loop() {
     json.set("suhu mesin:", random(10, 40) );
     json.set("suhu radiator:", random(90, 240) );
 Serial.printf("Set master json... %s\n", Firebase.RTDB.setJSON(&fbdo, masterparentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
+    
   server.handleClient();
 }
