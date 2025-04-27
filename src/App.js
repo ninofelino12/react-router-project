@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import config from './config';
-
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 const firebaseURL = config.firebaseURL;
 
 

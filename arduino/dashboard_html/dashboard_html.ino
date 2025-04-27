@@ -6,6 +6,14 @@
 
 #define GITHUB "https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/"
 //              https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/13597457.jpg
+//#define API_KEY "AIzaSyBjSTTlLJHED34kiRKX32IyHK1LKy7m18M"
+//#define DATABASE_URL "https://esp32-s3-control-system-default-rtdb.firebaseio.com/" 
+
+#define API_KEY "AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc"
+#define DATABASE_URL "https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app" //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
+ #define NTP_SERVER "pool.ntp.org"
+    #define UTC_OFFSET_SEC 25200 // Waktu Indonesia Barat (WIB)
+
 const int output = 2;
 const int buttonPin = 4;
 int ledState = LOW;          // the current state of the output pin
@@ -47,21 +55,22 @@ int lcdRows = 2;
 #include <TinyGPS++.h>
 #define DHTTYPE DHT11   // DHT 11
 const int DHTPin = 5;
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 // Initialize DHT sensor.
 DHT dht(DHTPin, DHTTYPE);
 
     SoftwareSerial sim800(10, 11); // RX, TX
-const char* apSSID = "ECU"+ESP.getChipId();
+//const char* apSSID = "ECU"+ESP.getChipId();
+const char* apSSID = "CCTVSAMPING";
 const char* apPassword = "11111111";
 const char* staSSID = "MEGAVISION";
 const char* staPassword = "nino2345";
-//#define API_KEY "AIzaSyBjSTTlLJHED34kiRKX32IyHK1LKy7m18M"
-//#define DATABASE_URL "https://esp32-s3-control-system-default-rtdb.firebaseio.com/" 
 
-#define API_KEY "AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc"
-#define DATABASE_URL "https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app" //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
- #define NTP_SERVER "pool.ntp.org"
-    #define UTC_OFFSET_SEC 25200 // Waktu Indonesia Barat (WIB)
      WiFiUDP ntpUDP;
     NTPClient timeClient(ntpUDP, NTP_SERVER, UTC_OFFSET_SEC);
 
@@ -112,6 +121,21 @@ unsigned long getTime() {
   return now;
 }
 void setup() {
+   Wire.begin(5, 4);
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  display.clearDisplay();
+
+  display.setTextSize(2); // Draw 2X-scale text
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(10, 0);
+  display.println(F("scroll"));
+  display.display();      // Show initial text
+  delay(100);
+  delay(2000); // Pause for 2 seconds
   lcd.init();
   // turn on LCD backlight                      
   lcd.backlight();
@@ -225,7 +249,17 @@ void scani2c() {
 void loop() {
   char buffer[50];
   buttonState = digitalRead(buttonPin); // Baca status push button
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
 
+
+  display.setTextSize(2); // Draw 2X-scale text
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(10, 0);
+  display.println(F("scroll"));
+  display.display();      // Show initial text
   if (buttonState == LOW) { // Jika tombol ditekan (LOW karena pull-up)
     Serial.println("Tombol ditekan!");
     delay(200); // Debouncing (menghindari pembacaan ganda)
@@ -320,7 +354,7 @@ Serial.print(ESP.getCoreVersion());
     hardwaredata.set("Chipid",ESP.getChipId());
      hardwaredata.set("freq",ESP.getCpuFreqMHz());
     hardwaredata.set("Flash ",ESP.getFlashChipSize() / (1024 * 1024));
-    hardwaredata.set("Led",{digitalRead(D4),digitalRead(D5)});
+//    hardwaredata.set("Led",{digitalRead(D4),digitalRead(D5)});
 
 
   //  json.set("timePath", String(timestamp));
