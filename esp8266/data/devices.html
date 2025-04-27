@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Perangkat (Device) dengan Combobox JSON</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        select {
+            width: calc(100% - 22px); /* Adjust for padding */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Form Data Perangkat</h2>
+    <form action="/submit_device" method="post">
+        <div class="form-group">
+            <label for="kendaraan">Kendaraan:</label>
+            <input type="text" id="kendaraan" name="kendaraan" placeholder="Nama atau Nomor Kendaraan" required>
+        </div>
+        <div class="form-group">
+            <label for="jenis">Jenis Perangkat:</label>
+            <select id="jenis" name="jenis" required>
+                <option value="">Memuat Jenis...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="operator">Operator:</label>
+            <input type="text" id="operator" name="operator" placeholder="Nama Operator atau ID" required>
+        </div>
+        <div class="form-group">
+            <label for="posisi">Posisi (Koordinat/Deskripsi):</label>
+            <input type="text" id="posisi" name="posisi" placeholder="Contoh: -6.2088, 106.8456 atau Gudang Utama" required>
+        </div>
+        <button type="submit">Simpan Data Perangkat</button>
+    </form>
+
+    <script>
+        function loadJenisPerangkat() {
+            fetch('data_jenis.json') // Ganti dengan path file JSON Anda
+                .then(response => response.json())
+                .then(data => {
+                    const selectJenis = document.getElementById('jenis');
+                    selectJenis.innerHTML = '<option value="">Pilih Jenis</option>'; // Reset opsi
+
+                    data.jenis_perangkat.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.value; // Jika ada properti 'value' di JSON
+                        option.textContent = item.nama; // Jika ada properti 'nama' di JSON
+                        selectJenis.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Gagal memuat data jenis perangkat:', error);
+                    const selectJenis = document.getElementById('jenis');
+                    selectJenis.innerHTML = '<option value="">Gagal memuat data</option>';
+                });
+        }
+
+        // Panggil fungsi untuk memuat data saat halaman dimuat
+        window.onload = loadJenisPerangkat;
+    </script>
+</body>
+</html>

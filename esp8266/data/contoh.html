@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Firebase dalam Tabel (Manual)</title>
+  
+</head>
+<body>
+  <h1>Data dari Firebase dalam Tabel (Manual)</h1>
+  <div id="table-container">Memuat data...</div>
+
+  <script>
+    const databaseUrl = 'https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app/.json?orderBy=%22$key%22&startAt=%22master%22&endAt=%22master\\uf8ff%22';
+    const tableContainer = document.getElementById('table-container');
+
+    fetch(databaseUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          
+          renderTable(data);
+        } else {
+          tableContainer.innerHTML = '<p>Tidak ada data yang ditemukan sesuai filter.</p>';
+        }
+            })
+
+           
+
+        
+         
+      .catch(error => {
+        console.error('Gagal mengambil data:', error);
+        tableContainer.innerHTML = '<p style="color: red;">Gagal mengambil data dari Firebase.</p>';
+      });
+
+      function renderTable(data) {
+          const dataArray = Object.values(data);
+          let tableHTML = '<table><thead><tr><th>Tanggal</th><th>OVERHEAD</th><th>Alat Berat</th></tr></thead><tbody>';
+
+          dataArray.forEach(row => {
+              tableHTML += '<tr>';
+              tableHTML += `<td>${row['00-tanggal']}</td>`;
+              tableHTML += `<td>${row['01-OVERHEAD']}</td>`;
+              tableHTML += `<td>${row['03-alatberat']}</td>`;
+              tableHTML += '</tr>';
+          });
+          tableHTML += '</tbody></table>';
+          tableContainer.innerHTML = tableHTML;
+          return tableHTML
+      };
+
+  </script>
+</body>
+</html>

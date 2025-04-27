@@ -2,17 +2,20 @@
 #define KENDARAAN "BOLDUZER"
 #define OPERATOR "Jhoni"
 #define MCU "ESP8266"
+
+
+#define API_KEY "AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc"
+#define DATABASE_URL "https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app" //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
+#define NTP_SERVER "pool.ntp.org"
+#define UTC_OFFSET_SEC 25200 // Waktu Indonesia Barat (WIB)
+//#define API_KEY "AIzaSyBjSTTlLJHED34kiRKX32IyHK1LKy7m18M"
+//#define DATABASE_URL "https://esp32-s3-control-system-default-rtdb.firebaseio.com/" 
+
 #define PHOTO "https://raw.githubusercontent.com/ninofelino12/nino_ecu_iot/refs/heads/main/lolin.jpeg"
 
 #define GITHUB "https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/"
 //              https://raw.githubusercontent.com/ninofelino12/react-router-project/refs/heads/master/img/13597457.jpg
-//#define API_KEY "AIzaSyBjSTTlLJHED34kiRKX32IyHK1LKy7m18M"
-//#define DATABASE_URL "https://esp32-s3-control-system-default-rtdb.firebaseio.com/" 
-
-#define API_KEY "AIzaSyCmZ7ySVfRFKVOfLXBs8rKin3VkKLgcgOc"
-#define DATABASE_URL "https://myiot-5a297-default-rtdb.asia-southeast1.firebasedatabase.app" //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
- #define NTP_SERVER "pool.ntp.org"
-    #define UTC_OFFSET_SEC 25200 // Waktu Indonesia Barat (WIB)
+#include <LOLIN_I2C_BUTTON.h>
 
 const int output = 2;
 const int buttonPin = 4;
@@ -38,7 +41,7 @@ int lcdRows = 2;
 #include <NTPClient.h>
     #include <WiFiUdp.h>
 
-
+#include <SPI.h>
 
 //#include <WebServer.h>
 #include "time.h"
@@ -51,16 +54,20 @@ int lcdRows = 2;
 #include <Firebase_ESP_Client.h>
  #include <SoftwareSerial.h>
  #include <Adafruit_Sensor.h>
+  #include <PubSubClient.h>
 #include <DHT.h>
 #include <TinyGPS++.h>
 #define DHTTYPE DHT11   // DHT 11
 const int DHTPin = 5;
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 48
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+#define OLED_RESET -1 
+
+//Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_SSD1306 display(OLED_RESET);
 // Initialize DHT sensor.
 DHT dht(DHTPin, DHTTYPE);
 
@@ -106,8 +113,21 @@ const int BUZZZER_PIN = D8;
 const int buzzerPin = D8;
 byte buzzer = D8;  
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows); 
+
+TinyGPSPlus gps;
+ESP8266WebServer server(80);   //instantiate server at port 80 (http port)
+
+  // Konfigurasi Broker MQTT
+    const char* mqtt_server = "broker.emqx.io";
+    const int mqtt_port = 1883;
+    const char* mqtt_topic = "topik/esp8266";
+
+    //WiFiClient espClient;
+   // PubSubClient client(espClient);
+    
 void handleRoot() {
- // server.send(200, "text/html", "<h1>ESP32 WiFi Extender & Web Server</h1>");
+  Serial.print("handle root");
+ server.send(200, "text/html", "<h1>ESP32 WiFi Extender & Web Server</h1>");
 }
  int nctl = 0;
 unsigned long getTime() {
@@ -123,26 +143,12 @@ unsigned long getTime() {
 void setup() {
    Wire.begin(5, 4);
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-  display.clearDisplay();
-
-  display.setTextSize(2); // Draw 2X-scale text
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(10, 0);
-  display.println(F("scroll"));
-  display.display();      // Show initial text
-  delay(100);
-  delay(2000); // Pause for 2 seconds
-  lcd.init();
-  // turn on LCD backlight                      
-  lcd.backlight();
+  
+  
    dht.begin();
     pinMode(buzzerPin, OUTPUT);
   Serial.begin(115200);
-  scani2c() ;
+  //scani2c() ;
   tone(buzzer,262);
   delay(50);
 
@@ -153,7 +159,7 @@ delay(10);
   IPAddress apIP = WiFi.softAPIP();
   Serial.print("Access Point IP address: ");
   Serial.println(apIP);
-
+  WiFi.mode(WIFI_STA);
   WiFi.begin(staSSID, staPassword);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
@@ -179,7 +185,9 @@ delay(10);
 //  netif_set_ipaddr(netif_find(TCPIP_ADAPTER_IF_AP), &ip4_ip);
 
   //server.on("/", handleRoot);
-  //server.begin();
+  server.begin();
+   server.on("/", handleRoot);
+
   Serial.println("Web server started!");
     config.api_key = API_KEY;
 
@@ -208,6 +216,7 @@ delay(10);
   sim800.begin(9600);
       delay(1000);
       cekSIM800();
+     
 
 }
 
@@ -249,11 +258,16 @@ void scani2c() {
 void loop() {
   char buffer[50];
   buttonState = digitalRead(buttonPin); // Baca status push button
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
 
+ // Serial.println(WiFi.softAPIP());
+ // Serial.println(WiFi.localIP());
+   Serial.println("OLED");
+display.begin(SSD1306_SWITCHCAPVCC, 0x3D);
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+     display.println(F("scroll"));
+    display.setTextColor(WHITE);
 
   display.setTextSize(2); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
@@ -283,7 +297,7 @@ void loop() {
   struct tm * timeinfo = localtime (&rawtime);
       String formattedDate = timeClient.getFormattedTime();
 reading = digitalRead(buttonPin);
-cekSIM800();
+//cekSIM800();
 Serial.println(address,HEX);
   String mac=WiFi.macAddress();
 Serial.print(ESP.getCoreVersion());
